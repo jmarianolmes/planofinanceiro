@@ -155,17 +155,41 @@
   .btn-small{padding:5px 10px;font-size:12px;border-radius:6px;}
   .btn-danger-outline{background:transparent;border-color:var(--danger);color:#e8b3a3;}
 
-  .confirm-banner{
-    background:#3a2f2f;
-    border-top:1px solid #5c4c46;
-    padding:10px 32px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    font-size:13.5px;
-    color:#f0e6df;
+  /* ---------- POP-UP CONFIRMATION ---------- */
+  .popup-confirm{
+    position: fixed;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.05);
+    z-index: 10000;
+    width: max-content;
+    max-width: 320px;
+    animation: popIn 0.15s ease-out;
   }
-  .confirm-banner .btn{padding:6px 14px;}
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .popup-msg{
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+  .popup-actions{
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+  .popup-confirm .btn-ghost {
+    color: var(--ink-soft);
+    border-color: var(--rule);
+  }
+  .popup-confirm .btn-ghost:hover {
+    background: var(--paper);
+  }
 
   /* ---------- LAYOUT ---------- */
   .layout{
@@ -277,7 +301,7 @@
   table.items{
     width:100%;
     border-collapse:collapse;
-    min-width: 600px; /* Garante que não esmague no celular */
+    min-width: 600px;
   }
   table.items thead th{
     text-align:left;
@@ -373,7 +397,7 @@
       overflow-x:auto;padding:10px 16px;background:var(--paper);
       border-bottom:1px solid var(--rule);gap:6px;z-index:15;
     }
-    .cat-nav::-webkit-scrollbar { display: none; } /* Esconde barra no nav no celular */
+    .cat-nav::-webkit-scrollbar { display: none; } 
     .cat-nav a{flex:none;background:var(--paper-alt);}
     .nav-total{display:none;}
     .nav-add-cat{flex:none;margin-top:0;white-space:nowrap;}
@@ -389,7 +413,7 @@
   @media print{
     body{background:#fff;}
     .summary-bar, .cat-nav, .add-item-btn, .category-actions, .row-remove,
-    .new-cat-form, .nav-add-cat, .confirm-banner, .meta-field label + input{}
+    .new-cat-form, .nav-add-cat, .meta-field label + input{}
     .summary-bar{position:static;box-shadow:none;background:#fff;color:#000;border-bottom:2px solid var(--ink);}
     .summary-bar .btn, .summary-bar .summary-actions{display:none;}
     .stat .label{color:#555;}
@@ -455,7 +479,6 @@
     <button class="btn btn-primary" id="btnPrint">Imprimir relatório</button>
   </div>
 </div>
-<div id="confirmSlot"></div>
 
 <div class="layout">
   <nav class="cat-nav" id="catNav"></nav>
@@ -717,22 +740,22 @@
     var zeroBtn = document.createElement("button");
     zeroBtn.className = "category-remove";
     zeroBtn.textContent = "Zerar valores";
-    zeroBtn.onclick = function(){ 
-      confirmAction('Tem certeza que deseja zerar a tabela "' + cat.name + '" os valores da categoria?', function(){
+    zeroBtn.onclick = function(e){ 
+      confirmAction('Tem certeza que deseja zerar a tabela "' + cat.name + '"?', function(){
         cat.items.forEach(function(item){ item.unit = 0; });
         scheduleSave(); 
         render();
-      }); 
+      }, e); 
     };
 
     var removeBtn = document.createElement("button");
     removeBtn.className = "category-remove";
     removeBtn.textContent = "Remover categoria";
-    removeBtn.onclick = function(){ 
+    removeBtn.onclick = function(e){ 
       confirmAction('Remover a categoria "'+cat.name+'" e todos os seus itens?', function(){
         state.categories = state.categories.filter(function(c){ return c.id !== cat.id; });
         scheduleSave(); render();
-      }); 
+      }, e); 
     };
 
     actionsWrap.appendChild(zeroBtn);
@@ -818,7 +841,7 @@
       tdDel.className = "col-del";
       var delBtn = document.createElement("button");
       delBtn.className = "row-remove"; delBtn.title = "Remover item"; delBtn.innerHTML = "&times;";
-      delBtn.onclick = function(){
+      delBtn.onclick = function(e){
         cat.items = cat.items.filter(function(i){ return i.id !== item.id; });
         scheduleSave(); render();
       };
@@ -902,21 +925,69 @@
     input.onkeydown = function(e){ if(e.key === "Enter") document.getElementById("newCatConfirm").click(); };
   }
 
-  // ---------- CONFIRM BANNER ----------
-  function confirmAction(message, onConfirm){
-    var slot = document.getElementById("confirmSlot");
-    slot.innerHTML = "";
-    var banner = document.createElement("div");
-    banner.className = "confirm-banner";
-    banner.innerHTML = '<span>'+escapeHtml(message)+'</span>';
-    var yes = document.createElement("button");
-    yes.className = "btn btn-primary btn-small"; yes.textContent = "Confirmar";
-    yes.onclick = function(){ slot.innerHTML=""; onConfirm(); };
-    var no = document.createElement("button");
-    no.className = "btn btn-ghost btn-small"; no.textContent = "Cancelar";
-    no.onclick = function(){ slot.innerHTML=""; };
-    banner.appendChild(yes); banner.appendChild(no);
-    slot.appendChild(banner);
+  // ---------- CONFIRM POP-UP AT MOUSE POSITION ----------
+  function confirmAction(message, onConfirm, event){
+    var existing = document.getElementById("popupConfirm");
+    if(existing) existing.remove();
+
+    var popup = document.createElement("div");
+    popup.id = "popupConfirm";
+    popup.className = "popup-confirm";
+
+    var msg = document.createElement("div");
+    msg.className = "popup-msg";
+    msg.textContent = message;
+    popup.appendChild(msg);
+
+    var actions = document.createElement("div");
+    actions.className = "popup-actions";
+
+    var btnYes = document.createElement("button");
+    btnYes.className = "btn btn-primary btn-small";
+    btnYes.textContent = "Confirmar";
+    btnYes.onclick = function(){
+      popup.remove();
+      onConfirm();
+    };
+
+    var btnNo = document.createElement("button");
+    btnNo.className = "btn btn-ghost btn-small";
+    btnNo.textContent = "Cancelar";
+    btnNo.onclick = function(){
+      popup.remove();
+    };
+
+    actions.appendChild(btnNo);
+    actions.appendChild(btnYes);
+    popup.appendChild(actions);
+
+    document.body.appendChild(popup);
+
+    // Calcula a posição do mouse (ou toque)
+    var x = event.clientX;
+    var y = event.clientY + 15; // Ligeiramente abaixo do cursor
+
+    // Ajusta se o pop-up for sair fora da tela pela direita ou por baixo
+    var rect = popup.getBoundingClientRect();
+    if (x + rect.width > window.innerWidth) {
+      x = window.innerWidth - rect.width - 15;
+    }
+    if (y + rect.height > window.innerHeight) {
+      y = event.clientY - rect.height - 15; // Exibe acima do cursor se faltar espaço embaixo
+    }
+
+    popup.style.left = x + "px";
+    popup.style.top = y + "px";
+
+    // Fecha o pop-up se o usuário clicar em qualquer outro lugar da tela
+    setTimeout(function(){
+      document.addEventListener('click', function closePopup(e) {
+        if (!popup.contains(e.target)) {
+          popup.remove();
+          document.removeEventListener('click', closePopup);
+        }
+      });
+    }, 50);
   }
 
   // ---------- EVENTS ----------
@@ -927,7 +998,7 @@
   document.getElementById("btnPrint").onclick = function(){ window.print(); };
   
   // Botão de zerar todas as tabelas
-  document.getElementById("btnZeroAll").onclick = function(){
+  document.getElementById("btnZeroAll").onclick = function(e){
     confirmAction("Tem certeza que deseja zerar TODAS as tabelas?", function(){
       state.categories.forEach(function(cat){
         cat.items.forEach(function(item){
@@ -936,16 +1007,16 @@
       });
       scheduleSave(); 
       render();
-    });
+    }, e);
   };
 
-  document.getElementById("btnRestore").onclick = function(){
-    confirmAction("Isso substitui todos os valores atuais pelos valores de referência originais. Deseja continuar?", function(){
+  document.getElementById("btnRestore").onclick = function(e){
+    confirmAction("Isso substitui todos os valores atuais pelos de referência. Deseja continuar?", function(){
       var meta = state.meta;
       state = defaultState();
       state.meta = meta;
       scheduleSave(); render();
-    });
+    }, e);
   };
 
   render();
