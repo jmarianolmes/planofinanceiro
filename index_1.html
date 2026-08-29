@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha de Custos — Abertura do Salão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EFEEE6;
+    --paper-alt:#E5E1D2;
+    --card:#FAF9F4;
+    --ink:#2A2420;
+    --ink-soft:#6b6154;
+    --ink-faint:#948a7a;
+    --wine:#7A2E3B;
+    --wine-dark:#5E212B;
+    --gold:#B08D57;
+    --teal:#2F5D50;
+    --rule:#D8D2C2;
+    --danger:#A6472E;
+    --font-display:'Fraunces', serif;
+    --font-body:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+    --radius:10px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--gold);color:#fff;}
+
+  a{color:var(--wine);}
+
+  /* ---------- HEADER ---------- */
+  .site-header{
+    padding:28px 32px 20px;
+    border-bottom:1px solid var(--rule);
+    background:linear-gradient(180deg, var(--paper) 0%, var(--paper-alt) 100%);
+  }
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--wine);
+    margin:0 0 6px;
+  }
+  .site-header h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(26px,4vw,38px);
+    margin:0 0 6px;
+    letter-spacing:-0.01em;
+  }
+  .site-header p.lede{
+    margin:0 0 18px;
+    color:var(--ink-soft);
+    max-width:62ch;
+    font-size:14.5px;
+  }
+  .meta-fields{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 18px;
+  }
+  .meta-field{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+    min-width:180px;
+  }
+  .meta-field label{
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:var(--ink-faint);
+    font-family:var(--font-mono);
+  }
+  .meta-field input{
+    border:none;
+    border-bottom:1px solid var(--rule);
+    background:transparent;
+    font-family:var(--font-body);
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--ink);
+    padding:3px 2px;
+    min-width:200px;
+  }
+  .meta-field input:focus{outline:none;border-bottom-color:var(--wine);}
+
+  /* ---------- SUMMARY BAR ---------- */
+  .summary-bar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:var(--ink);
+    color:#EFEEE6;
+    padding:14px 32px;
+    display:flex;
+    align-items:center;
+    gap:28px;
+    flex-wrap:wrap;
+    box-shadow:0 4px 14px rgba(0,0,0,.12);
+  }
+  .stat{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .stat .label{
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:.09em;
+    text-transform:uppercase;
+    color:#c9c2b3;
+  }
+  .stat .value{
+    font-family:var(--font-mono);
+    font-size:20px;
+    font-weight:600;
+    color:#fff;
+  }
+  .stat.highlight .value{color:var(--gold);}
+  .summary-actions{
+    margin-left:auto;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    font-family:var(--font-body);
+    font-size:13px;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:8px;
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:transform .08s ease, opacity .15s ease;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:var(--gold);color:#2A2420;}
+  .btn-primary:hover{opacity:.9;}
+  .btn-ghost{background:transparent;color:#EFEEE6;border-color:#5c564a;}
+  .btn-ghost:hover{background:#3a342d;}
+  .btn-small{padding:5px 10px;font-size:12px;border-radius:6px;}
+  .btn-danger-outline{background:transparent;border-color:var(--danger);color:#e8b3a3;}
+
+  .confirm-banner{
+    background:#3a2f2f;
+    border-top:1px solid #5c4c46;
+    padding:10px 32px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    font-size:13.5px;
+    color:#f0e6df;
+  }
+  .confirm-banner .btn{padding:6px 14px;}
+
+  /* ---------- LAYOUT ---------- */
+  .layout{
+    display:flex;
+    align-items:flex-start;
+    max-width:1180px;
+    margin:0 auto;
+  }
+  .cat-nav{
+    width:230px;
+    flex:none;
+    position:sticky;
+    top:76px;
+    padding:22px 12px 40px 32px;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .cat-nav a{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    text-decoration:none;
+    color:var(--ink-soft);
+    font-size:13px;
+    padding:7px 8px;
+    border-radius:7px;
+  }
+  .cat-nav a:hover{background:var(--paper-alt);color:var(--ink);}
+  .swatch{
+    width:11px;height:11px;border-radius:3px;flex:none;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);
+  }
+  .cat-nav .nav-name{flex:1;}
+  .cat-nav .nav-total{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-faint);
+  }
+  .nav-add-cat{
+    margin-top:14px;
+    border:1px dashed var(--rule);
+    background:transparent;
+    color:var(--ink-soft);
+    border-radius:7px;
+    padding:8px;
+    font-size:12.5px;
+    cursor:pointer;
+    text-align:left;
+  }
+  .nav-add-cat:hover{border-color:var(--wine);color:var(--wine);}
+
+  .content{
+    flex:1;
+    min-width:0;
+    padding:26px 32px 80px;
+  }
+
+  /* ---------- CATEGORY CARD ---------- */
+  .category{
+    background:var(--card);
+    border:1px solid var(--rule);
+    border-left:5px solid var(--cat-color, var(--wine));
+    border-radius:var(--radius);
+    margin-bottom:22px;
+    overflow:hidden;
+    scroll-margin-top:90px;
+  }
+  .category-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:16px 20px 12px;
+    flex-wrap:wrap;
+  }
+  .category-head h2{
+    font-family:var(--font-display);
+    font-size:19px;
+    font-weight:600;
+    margin:0;
+    flex:1;
+    min-width:180px;
+  }
+  .category-subtotal{
+    font-family:var(--font-mono);
+    font-size:15px;
+    font-weight:600;
+    color:var(--cat-color, var(--wine));
+  }
+  .category-remove{
+    background:none;border:none;color:var(--ink-faint);
+    cursor:pointer;font-size:12px;padding:2px 6px;
+  }
+  .category-remove:hover{color:var(--danger);}
+
+  table.items{
+    width:100%;
+    border-collapse:collapse;
+  }
+  table.items thead th{
+    text-align:left;
+    font-family:var(--font-mono);
+    font-size:10px;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+    font-weight:600;
+    padding:6px 8px;
+    border-top:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    background:var(--paper-alt);
+  }
+  table.items td{
+    padding:7px 8px;
+    border-bottom:1px solid var(--rule);
+    vertical-align:top;
+  }
+  table.items tbody tr:hover{background:rgba(176,141,87,0.06);}
+  .col-name{width:34%;}
+  .col-note{color:var(--ink-faint);font-size:11.5px;margin-top:2px;line-height:1.35;}
+  .col-type{width:110px;}
+  .col-qty{width:64px;}
+  .col-unit{width:110px;}
+  .col-sub{width:110px;text-align:right;}
+  .col-del{width:32px;}
+
+  table.items input[type=text]{
+    width:100%;border:none;background:transparent;
+    font-family:var(--font-body);font-size:13.5px;color:var(--ink);
+    padding:3px 4px;border-radius:5px;
+  }
+  table.items input[type=text]:focus{outline:none;background:#fff;box-shadow:0 0 0 1px var(--rule);}
+  table.items input[type=number]{
+    width:100%;border:1px solid var(--rule);background:#fff;
+    font-family:var(--font-mono);font-size:13px;color:var(--ink);
+    padding:4px 6px;border-radius:5px;
+  }
+  table.items input[type=number]:focus{outline:none;border-color:var(--wine);}
+  table.items select{
+    width:100%;border:1px solid var(--rule);background:#fff;
+    font-family:var(--font-body);font-size:12.5px;color:var(--ink);
+    padding:4px 4px;border-radius:5px;
+  }
+  .subtotal-cell{
+    font-family:var(--font-mono);
+    font-weight:600;
+    text-align:right;
+    white-space:nowrap;
+  }
+  .row-remove{
+    background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:15px;
+    line-height:1;padding:2px 4px;
+  }
+  .row-remove:hover{color:var(--danger);}
+
+  .category-foot{
+    padding:10px 20px 16px;
+  }
+  .add-item-btn{
+    background:none;
+    border:1px dashed var(--rule);
+    color:var(--ink-soft);
+    font-size:12.5px;
+    padding:7px 12px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  .add-item-btn:hover{border-color:var(--cat-color,var(--wine));color:var(--cat-color,var(--wine));}
+
+  .new-cat-form{
+    display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;align-items:center;
+  }
+  .new-cat-form input{
+    border:1px solid var(--rule);border-radius:6px;padding:7px 9px;
+    font-family:var(--font-body);font-size:13px;flex:1;min-width:160px;
+  }
+
+  footer.page-footer{
+    max-width:1180px;margin:0 auto;padding:10px 32px 60px 282px;
+    color:var(--ink-faint);font-size:12px;line-height:1.6;
+  }
+  footer.page-footer h3{
+    font-family:var(--font-body);font-size:12px;text-transform:uppercase;
+    letter-spacing:.06em;color:var(--ink-soft);margin:18px 0 6px;
+  }
+
+  @media (max-width: 900px){
+    .layout{flex-direction:column;}
+    .cat-nav{
+      position:sticky;top:64px;width:100%;flex-direction:row;
+      overflow-x:auto;padding:10px 16px;background:var(--paper);
+      border-bottom:1px solid var(--rule);gap:6px;z-index:15;
+    }
+    .cat-nav a{flex:none;background:var(--paper-alt);}
+    .nav-total{display:none;}
+    .nav-add-cat{flex:none;margin-top:0;white-space:nowrap;}
+    .content{padding:20px 16px 60px;}
+    footer.page-footer{padding:10px 16px 60px;}
+    .site-header{padding:22px 18px 16px;}
+    .summary-bar{padding:12px 16px;gap:16px;}
+    .stat .value{font-size:16px;}
+  }
+
+  /* ---------- PRINT ---------- */
+  .print-header{display:none;}
+  @media print{
+    body{background:#fff;}
+    .summary-bar, .cat-nav, .add-item-btn, .category-remove, .row-remove,
+    .new-cat-form, .nav-add-cat, .confirm-banner, .meta-field label + input{}
+    .summary-bar{position:static;box-shadow:none;background:#fff;color:#000;border-bottom:2px solid var(--ink);}
+    .summary-bar .btn, .summary-bar .summary-actions{display:none;}
+    .stat .label{color:#555;}
+    .stat .value{color:#000;}
+    .stat.highlight .value{color:var(--wine);}
+    .cat-nav{display:none;}
+    .layout{display:block;max-width:100%;}
+    .content{padding:0;max-width:100%;}
+    .site-header{border-bottom:2px solid var(--ink);}
+    .add-item-btn, .category-remove, .row-remove, .new-cat-form, .nav-add-cat{display:none !important;}
+    .category{break-inside:avoid;border:1px solid #999;margin-bottom:14px;}
+    table.items input[type=text],
+    table.items input[type=number]{border:none;background:transparent;padding:2px 3px;}
+    table.items select{border:none;background:transparent;-webkit-appearance:none;appearance:none;padding:2px 0;}
+    a{color:inherit;text-decoration:none;}
+    footer.page-footer{padding:10px 0 20px;}
+    .print-only-date{display:block;font-family:var(--font-mono);font-size:11px;color:#555;margin-top:6px;}
+  }
+  .print-only-date{display:none;}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <p class="eyebrow">Plano financeiro de abertura</p>
+  <h1>Ficha de Custos — Abertura do Salão</h1>
+  <p class="lede">Controle os custos de constituição, licenças, local, reforma, fachada, equipamentos e materiais para abrir o salão. Edite qualquer valor, adicione itens ou categorias próprias, e imprima um relatório limpo para apresentação.</p>
+  <div class="meta-fields">
+    <div class="meta-field">
+      <label for="fBusiness">Nome do negócio</label>
+      <input id="fBusiness" type="text" placeholder="Ex.: Studio ___ Beauty">
+    </div>
+    <div class="meta-field">
+      <label for="fOwner">Responsável</label>
+      <input id="fOwner" type="text" placeholder="Seu nome">
+    </div>
+    <div class="meta-field">
+      <label for="fCity">Local</label>
+      <input id="fCity" type="text" value="Valência, Espanha">
+    </div>
+  </div>
+  <div class="print-only-date" id="printDate"></div>
+</header>
+
+<div class="summary-bar" id="summaryBar">
+  <div class="stat">
+    <span class="label">Investimento inicial</span>
+    <span class="value" id="totalUnico">€0</span>
+  </div>
+  <div class="stat">
+    <span class="label">Custos mensais recorrentes</span>
+    <span class="value" id="totalMensal">€0</span>
+  </div>
+  <div class="stat highlight">
+    <span class="label">Necessário no 1º mês</span>
+    <span class="value" id="totalPrimeiroMes">€0</span>
+  </div>
+  <div class="summary-actions">
+    <button class="btn btn-ghost" id="btnRestore">Restaurar valores de referência</button>
+    <button class="btn btn-primary" id="btnPrint">Imprimir relatório</button>
+  </div>
+</div>
+<div id="confirmSlot"></div>
+
+<div class="layout">
+  <nav class="cat-nav" id="catNav"></nav>
+  <main class="content" id="content"></main>
+</div>
+
+<footer class="page-footer">
+  <h3>Sobre os valores de referência</h3>
+  <p>Todos os valores pré-preenchidos são <strong>estimativas de referência</strong>, reunidas a partir de pesquisa de mercado sobre custos típicos em Valência e na Espanha (constituição de sociedade, licença de atividade, registro sanitário, aluguel comercial, reforma, seguros e equipamentos de salão de beleza). Eles variam conforme o bairro, o tamanho do local, o estado do imóvel e o fornecedor escolhido — use-os como ponto de partida e ajuste cada linha com orçamentos reais antes de decidir. Este painel não substitui a orientação de uma gestoria, de um técnico habilitado (para o projeto de atividade) ou de um contador.</p>
+  <h3>Notas</h3>
+  <p>"Balcão de recepção" foi incluído na categoria de Mobiliário — ajuste ou remova se não for o item que você tinha em mente. A linha de constituição de empresa assume a abertura de uma Sociedade Limitada (SL); se optar por trabalhar como autônomo (autónomo), edite ou remova as linhas de capital social, notário e registro mercantil, e ajuste a cota do RETA.</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "salaoCustosState_v2";
+
+  function uid(){ return Math.random().toString(36).slice(2,10); }
+
+  function defaultState(){
+    return {
+      meta:{ businessName:"", owner:"", city:"Valência, Espanha" },
+      categories:[
+        {
+          id:"constituicao", name:"Constituição da Empresa e Sociedade", color:"#7A2E3B", custom:false,
+          items:[
+            {id:uid(), name:"Capital social mínimo (Sociedade Limitada)", note:"Fica depositado na conta da empresa — não é gasto perdido, mas precisa estar disponível para constituir a SL.", type:"unico", qty:1, unit:3000},
+            {id:uid(), name:"Notário — escritura de constituição", note:"", type:"unico", qty:1, unit:150},
+            {id:uid(), name:"Registro Mercantil — inscrição", note:"", type:"unico", qty:1, unit:100},
+            {id:uid(), name:"Certificação negativa do nome (denominação social)", note:"", type:"unico", qty:1, unit:17},
+            {id:uid(), name:"Publicação no BORME", note:"", type:"unico", qty:1, unit:50},
+            {id:uid(), name:"Gestoria — assessoria de constituição", note:"", type:"unico", qty:1, unit:300},
+            {id:uid(), name:"Certificado digital da empresa", note:"", type:"unico", qty:1, unit:25},
+            {id:uid(), name:"Alta de autônomo/sócio administrador (RETA)", note:"Tarifa plana de referência para o 1º ano. Se não for elegível ou após o período, a cota real pode subir para ~200–450 €/mês.", type:"mensal", qty:1, unit:80}
+          ]
+        },
+        {
+          id:"licencas", name:"Licenças e Alvarás", color:"#B08D57", custom:false,
+          items:[
+            {id:uid(), name:"Licença de Abertura/Atividade (projeto técnico + taxas municipais)", note:"Média em Valência ≈ 1.260 €, varia entre 465 € e 6.190 € conforme o local e a atividade.", type:"unico", qty:1, unit:1260},
+            {id:uid(), name:"Comunicação/Registro Sanitário (Conselleria de Sanitat)", note:"A comunicação em si costuma ser gratuita; valor de referência cobre assessoria técnica.", type:"unico", qty:1, unit:150},
+            {id:uid(), name:"Boletim elétrico / certificado de instalações", note:"", type:"unico", qty:1, unit:200},
+            {id:uid(), name:"Licença municipal de rótulo/toldo", note:"", type:"unico", qty:1, unit:80}
+          ]
+        },
+        {
+          id:"imovel", name:"Imóvel e Local Comercial", color:"#2F5D50", custom:false,
+          items:[
+            {id:uid(), name:"Aluguel mensal do local (~45–50 m²)", note:"Referência para zona de bairro em Valência (≈12 €/m²). Em zonas prime pode passar de 20 €/m².", type:"mensal", qty:1, unit:600},
+            {id:uid(), name:"Caução/fiança (2 meses de aluguel)", note:"", type:"unico", qty:1, unit:1200},
+            {id:uid(), name:"Honorários de agência imobiliária (1 mês + IVA)", note:"", type:"unico", qty:1, unit:726},
+            {id:uid(), name:"Seguro multirriscos do local", note:"", type:"mensal", qty:1, unit:30}
+          ]
+        },
+        {
+          id:"reforma", name:"Reforma e Adequação do Espaço", color:"#4A5568", custom:false,
+          items:[
+            {id:uid(), name:"Reforma geral (elétrica, hidráulica, pisos, pintura)", note:"Referência ≈400 €/m² para 45 m². Reformas de peluquería no mercado espanhol variam de 300 a 700 €/m².", type:"unico", qty:1, unit:18000},
+            {id:uid(), name:"Climatização (ar condicionado)", note:"", type:"unico", qty:1, unit:2000},
+            {id:uid(), name:"Iluminação e espelhos", note:"", type:"unico", qty:1, unit:800}
+          ]
+        },
+        {
+          id:"fachada", name:"Fachada e Identidade Visual", color:"#C9622A", custom:false,
+          items:[
+            {id:uid(), name:"Rótulo luminoso / caixa de luz", note:"Caixa de luz LED padrão para pequeno comércio: 400–600 €.", type:"unico", qty:1, unit:500},
+            {id:uid(), name:"Toldo ou persiana", note:"", type:"unico", qty:1, unit:400},
+            {id:uid(), name:"Vinil decorativo / vitrine", note:"", type:"unico", qty:1, unit:200},
+            {id:uid(), name:"Logotipo e identidade visual", note:"", type:"unico", qty:1, unit:300}
+          ]
+        },
+        {
+          id:"recepcao", name:"Recepção e Mobiliário Comum", color:"#6B4E71", custom:false,
+          items:[
+            {id:uid(), name:"Balcão de recepção", note:"", type:"unico", qty:1, unit:450},
+            {id:uid(), name:"Cadeiras de espera", note:"", type:"unico", qty:3, unit:50},
+            {id:uid(), name:"Espelho decorativo", note:"", type:"unico", qty:1, unit:80},
+            {id:uid(), name:"Sistema de agendamento (software, mensal)", note:"", type:"mensal", qty:1, unit:25},
+            {id:uid(), name:"Terminal de pagamento — TPV (aluguel mensal)", note:"", type:"mensal", qty:1, unit:15}
+          ]
+        },
+        {
+          id:"cabeleireiro", name:"Equipamentos — Cabeleireiro (1 profissional)", color:"#1F6F78", custom:false,
+          items:[
+            {id:uid(), name:"Cadeira de cabeleireiro hidráulica", note:"", type:"unico", qty:1, unit:250},
+            {id:uid(), name:"Lavatório / lava-cabeças", note:"", type:"unico", qty:1, unit:350},
+            {id:uid(), name:"Posto de trabalho com espelho", note:"", type:"unico", qty:1, unit:150},
+            {id:uid(), name:"Secador profissional", note:"", type:"unico", qty:1, unit:80},
+            {id:uid(), name:"Chapinha e babyliss", note:"", type:"unico", qty:1, unit:100},
+            {id:uid(), name:"Kit de tesouras, pentes e navalhas", note:"", type:"unico", qty:1, unit:150},
+            {id:uid(), name:"Carrinho auxiliar", note:"", type:"unico", qty:1, unit:60},
+            {id:uid(), name:"Capas de corte e toalhas", note:"", type:"unico", qty:1, unit:80}
+          ]
+        },
+        {
+          id:"manicure", name:"Equipamentos — Manicure/Pedicure (3 profissionais)", color:"#A63A50", custom:false,
+          items:[
+            {id:uid(), name:"Mesa de manicure com cadeira", note:"Faixa de mercado: 150–1.700 €; valor médio de referência.", type:"unico", qty:3, unit:320},
+            {id:uid(), name:"Poltrona de pedicure com pedilúvio", note:"Compartilhada entre as profissionais.", type:"unico", qty:1, unit:400},
+            {id:uid(), name:"Lâmpada UV/LED de secagem", note:"", type:"unico", qty:3, unit:40},
+            {id:uid(), name:"Autoclave/esterilizador", note:"Compartilhado entre as 3 profissionais.", type:"unico", qty:1, unit:300},
+            {id:uid(), name:"Kit de utensílios (alicates, lixas, espátulas)", note:"", type:"unico", qty:3, unit:60},
+            {id:uid(), name:"Banquetas ajustáveis para manicuristas", note:"", type:"unico", qty:3, unit:45}
+          ]
+        },
+        {
+          id:"materiais", name:"Materiais e Estoque Inicial", color:"#7C9070", custom:false,
+          items:[
+            {id:uid(), name:"Esmaltes e vernizes", note:"", type:"unico", qty:1, unit:400},
+            {id:uid(), name:"Produtos capilares (shampoo, coloração, tratamentos)", note:"", type:"unico", qty:1, unit:500},
+            {id:uid(), name:"Toalhas, roupões e enxoval", note:"", type:"unico", qty:1, unit:250},
+            {id:uid(), name:"Materiais descartáveis (luvas, lixas, algodão)", note:"", type:"unico", qty:1, unit:150},
+            {id:uid(), name:"Equipamentos de proteção (máscaras, aventais)", note:"", type:"unico", qty:1, unit:80}
+          ]
+        },
+        {
+          id:"admin", name:"Administrativo, Seguros e Marketing", color:"#8A6D3F", custom:false,
+          items:[
+            {id:uid(), name:"Seguro de responsabilidade civil profissional", note:"Referência de mercado: desde 120 €/ano; aqui convertido em valor mensal aproximado.", type:"mensal", qty:1, unit:20},
+            {id:uid(), name:"Gestoria — mensalidade contábil e fiscal", note:"", type:"mensal", qty:1, unit:150},
+            {id:uid(), name:"Website e domínio (primeiro ano)", note:"", type:"unico", qty:1, unit:100},
+            {id:uid(), name:"Marketing de lançamento e inauguração", note:"", type:"unico", qty:1, unit:400},
+            {id:uid(), name:"Uniformes da equipe (4 pessoas)", note:"", type:"unico", qty:1, unit:200}
+          ]
+        },
+        {
+          id:"contingencia", name:"Reserva de Contingência", color:"#55535A", custom:false,
+          items:[
+            {id:uid(), name:"Reserva para imprevistos", note:"Recomendação geral do setor: 10–15% do investimento inicial total. Ajuste conforme o restante do orçamento evoluir.", type:"unico", qty:1, unit:3000}
+          ]
+        },
+        {
+          id:"outros", name:"Outras Despesas", color:"#9C9284", custom:false,
+          items:[]
+        }
+      ]
+    };
+  }
+
+  var state = loadState();
+  var saveTimer = null;
+
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        var parsed = JSON.parse(raw);
+        if(parsed && parsed.categories) return parsed;
+      }
+    }catch(e){}
+    return defaultState();
+  }
+
+  function scheduleSave(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+    }, 250);
+  }
+
+  function eur(n){
+    if(isNaN(n)) n = 0;
+    return new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:2}).format(n);
+  }
+
+  function itemSubtotal(item){
+    var q = parseFloat(item.qty); if(isNaN(q)) q = 0;
+    var u = parseFloat(item.unit); if(isNaN(u)) u = 0;
+    return q*u;
+  }
+
+  function categoryTotals(cat){
+    var unico=0, mensal=0;
+    cat.items.forEach(function(it){
+      var s = itemSubtotal(it);
+      if(it.type === "mensal") mensal += s; else unico += s;
+    });
+    return {unico:unico, mensal:mensal, combined:unico+mensal};
+  }
+
+  function grandTotals(){
+    var unico=0, mensal=0;
+    state.categories.forEach(function(cat){
+      var t = categoryTotals(cat);
+      unico += t.unico; mensal += t.mensal;
+    });
+    return {unico:unico, mensal:mensal, primeiroMes:unico+mensal};
+  }
+
+  // ---------- RENDER ----------
+  var navEl = document.getElementById("catNav");
+  var contentEl = document.getElementById("content");
+
+  function render(){
+    // meta fields
+    document.getElementById("fBusiness").value = state.meta.businessName || "";
+    document.getElementById("fOwner").value = state.meta.owner || "";
+    document.getElementById("fCity").value = state.meta.city || "";
+
+    var totals = grandTotals();
+    document.getElementById("totalUnico").textContent = eur(totals.unico);
+    document.getElementById("totalMensal").textContent = eur(totals.mensal);
+    document.getElementById("totalPrimeiroMes").textContent = eur(totals.primeiroMes);
+
+    var maxCombined = 1;
+    state.categories.forEach(function(cat){ maxCombined = Math.max(maxCombined, categoryTotals(cat).combined); });
+
+    // nav
+    navEl.innerHTML = "";
+    state.categories.forEach(function(cat){
+      var t = categoryTotals(cat);
+      var a = document.createElement("a");
+      a.href = "#cat-" + cat.id;
+      a.innerHTML = '<span class="swatch" style="background:'+cat.color+'"></span>' +
+                    '<span class="nav-name">'+escapeHtml(cat.name)+'</span>' +
+                    '<span class="nav-total">'+eur(t.combined)+'</span>';
+      navEl.appendChild(a);
+    });
+    var addCatBtn = document.createElement("button");
+    addCatBtn.className = "nav-add-cat";
+    addCatBtn.textContent = "+ Nova categoria personalizada";
+    addCatBtn.onclick = showAddCategoryForm;
+    navEl.appendChild(addCatBtn);
+
+    // content
+    contentEl.innerHTML = "";
+    state.categories.forEach(function(cat){
+      contentEl.appendChild(renderCategory(cat));
+    });
+
+    var printDate = document.getElementById("printDate");
+    var d = new Date();
+    printDate.textContent = "Relatório gerado em " + d.toLocaleDateString('pt-BR', {day:'2-digit', month:'long', year:'numeric'});
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  function renderCategory(cat){
+    var wrap = document.createElement("section");
+    wrap.className = "category";
+    wrap.id = "cat-" + cat.id;
+    wrap.style.setProperty("--cat-color", cat.color);
+
+    var t = categoryTotals(cat);
+
+    var head = document.createElement("div");
+    head.className = "category-head";
+    head.innerHTML =
+      '<h2><span class="swatch" style="background:'+cat.color+'"></span> '+escapeHtml(cat.name)+'</h2>' +
+      '<span class="category-subtotal">'+eur(t.combined)+'</span>';
+    var removeBtn = document.createElement("button");
+    removeBtn.className = "category-remove";
+    removeBtn.textContent = "Remover categoria";
+    removeBtn.onclick = function(){ confirmAction('Remover a categoria "'+cat.name+'" e todos os seus itens?', function(){
+      state.categories = state.categories.filter(function(c){ return c.id !== cat.id; });
+      scheduleSave(); render();
+    }); };
+    head.appendChild(removeBtn);
+    wrap.appendChild(head);
+
+    var table = document.createElement("table");
+    table.className = "items";
+    table.innerHTML =
+      '<thead><tr>' +
+      '<th class="col-name">Item</th>' +
+      '<th class="col-type">Tipo</th>' +
+      '<th class="col-qty">Qtd.</th>' +
+      '<th class="col-unit">Valor unit. (€)</th>' +
+      '<th class="col-sub">Subtotal</th>' +
+      '<th class="col-del"></th>' +
+      '</tr></thead>';
+    var tbody = document.createElement("tbody");
+
+    if(cat.items.length === 0){
+      var trEmpty = document.createElement("tr");
+      trEmpty.innerHTML = '<td colspan="6" style="color:var(--ink-faint);font-size:12.5px;padding:14px 8px;">Nenhum item ainda. Use "+ Adicionar item" abaixo para começar a listar despesas nesta categoria.</td>';
+      tbody.appendChild(trEmpty);
+    }
+
+    cat.items.forEach(function(item){
+      var tr = document.createElement("tr");
+
+      var tdName = document.createElement("td");
+      tdName.className = "col-name";
+      var nameInput = document.createElement("input");
+      nameInput.type = "text"; nameInput.value = item.name; nameInput.setAttribute("aria-label","Nome do item");
+      nameInput.oninput = function(){ item.name = nameInput.value; scheduleSave(); updateSubtotalsOnly(); };
+      tdName.appendChild(nameInput);
+      if(item.note){
+        var noteEl = document.createElement("div");
+        noteEl.className = "col-note";
+        noteEl.textContent = item.note;
+        tdName.appendChild(noteEl);
+      }
+      tr.appendChild(tdName);
+
+      var tdType = document.createElement("td");
+      tdType.className = "col-type";
+      var sel = document.createElement("select");
+      sel.setAttribute("aria-label","Tipo de custo");
+      sel.innerHTML = '<option value="unico">Único</option><option value="mensal">Mensal</option>';
+      sel.value = item.type;
+      sel.onchange = function(){ item.type = sel.value; scheduleSave(); render(); };
+      tdType.appendChild(sel);
+      tr.appendChild(tdType);
+
+      var tdQty = document.createElement("td");
+      tdQty.className = "col-qty";
+      var qtyInput = document.createElement("input");
+      qtyInput.type = "number"; qtyInput.min = "0"; qtyInput.step = "1"; qtyInput.value = item.qty;
+      qtyInput.setAttribute("aria-label","Quantidade");
+      qtyInput.oninput = function(){ item.qty = qtyInput.value; scheduleSave(); updateSubtotalsOnly(); };
+      tdQty.appendChild(qtyInput);
+      tr.appendChild(tdQty);
+
+      var tdUnit = document.createElement("td");
+      tdUnit.className = "col-unit";
+      var unitInput = document.createElement("input");
+      unitInput.type = "number"; unitInput.min = "0"; unitInput.step = "0.01"; unitInput.value = item.unit;
+      unitInput.setAttribute("aria-label","Valor unitário em euros");
+      unitInput.oninput = function(){ item.unit = unitInput.value; scheduleSave(); updateSubtotalsOnly(); };
+      tdUnit.appendChild(unitInput);
+      tr.appendChild(tdUnit);
+
+      var tdSub = document.createElement("td");
+      tdSub.className = "col-sub subtotal-cell";
+      tdSub.dataset.itemId = item.id;
+      tdSub.textContent = eur(itemSubtotal(item));
+      tr.appendChild(tdSub);
+
+      var tdDel = document.createElement("td");
+      tdDel.className = "col-del";
+      var delBtn = document.createElement("button");
+      delBtn.className = "row-remove"; delBtn.title = "Remover item"; delBtn.innerHTML = "&times;";
+      delBtn.onclick = function(){
+        cat.items = cat.items.filter(function(i){ return i.id !== item.id; });
+        scheduleSave(); render();
+      };
+      tdDel.appendChild(delBtn);
+      tr.appendChild(tdDel);
+
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    wrap.appendChild(table);
+
+    var foot = document.createElement("div");
+    foot.className = "category-foot";
+    var addItemBtn = document.createElement("button");
+    addItemBtn.className = "add-item-btn";
+    addItemBtn.textContent = "+ Adicionar item";
+    addItemBtn.style.setProperty("--cat-color", cat.color);
+    addItemBtn.onclick = function(){
+      cat.items.push({id:uid(), name:"Novo item", note:"", type:"unico", qty:1, unit:0});
+      scheduleSave(); render();
+      var el = document.getElementById("cat-"+cat.id);
+      if(el) el.scrollIntoView({behavior:"smooth", block:"nearest"});
+    };
+    foot.appendChild(addItemBtn);
+    wrap.appendChild(foot);
+
+    return wrap;
+  }
+
+  // Cheap path: just refresh numbers without full re-render (keeps focus while typing)
+  function updateSubtotalsOnly(){
+    document.querySelectorAll(".subtotal-cell").forEach(function(cell){
+      var id = cell.dataset.itemId;
+      state.categories.forEach(function(cat){
+        cat.items.forEach(function(it){
+          if(it.id === id) cell.textContent = eur(itemSubtotal(it));
+        });
+      });
+    });
+    state.categories.forEach(function(cat){
+      var el = document.getElementById("cat-"+cat.id);
+      if(!el) return;
+      var t = categoryTotals(cat);
+      var subEl = el.querySelector(".category-subtotal");
+      if(subEl) subEl.textContent = eur(t.combined);
+    });
+    var totals = grandTotals();
+    document.getElementById("totalUnico").textContent = eur(totals.unico);
+    document.getElementById("totalMensal").textContent = eur(totals.mensal);
+    document.getElementById("totalPrimeiroMes").textContent = eur(totals.primeiroMes);
+    document.querySelectorAll(".nav-total").forEach(function(navTotal, idx){
+      var cat = state.categories[idx];
+      if(cat) navTotal.textContent = eur(categoryTotals(cat).combined);
+    });
+  }
+
+  // ---------- ADD CATEGORY ----------
+  var palette = ["#7A2E3B","#B08D57","#2F5D50","#4A5568","#C9622A","#6B4E71","#1F6F78","#A63A50","#7C9070","#8A6D3F","#55535A","#9C9284"];
+
+  function showAddCategoryForm(){
+    if(document.getElementById("newCatForm")) return;
+    var form = document.createElement("div");
+    form.className = "new-cat-form";
+    form.id = "newCatForm";
+    form.innerHTML = '<input type="text" id="newCatInput" placeholder="Nome da nova categoria">' +
+      '<button class="btn btn-primary btn-small" id="newCatConfirm">Adicionar</button>' +
+      '<button class="btn btn-ghost btn-small" id="newCatCancel" style="color:var(--ink-soft);border-color:var(--rule);">Cancelar</button>';
+    navEl.appendChild(form);
+    var input = document.getElementById("newCatInput");
+    input.focus();
+    document.getElementById("newCatConfirm").onclick = function(){
+      var name = input.value.trim();
+      if(!name) return;
+      var color = palette[state.categories.length % palette.length];
+      state.categories.push({id:"custom-"+uid(), name:name, color:color, custom:true, items:[]});
+      scheduleSave(); render();
+    };
+    document.getElementById("newCatCancel").onclick = function(){ render(); };
+    input.onkeydown = function(e){ if(e.key === "Enter") document.getElementById("newCatConfirm").click(); };
+  }
+
+  // ---------- CONFIRM BANNER ----------
+  function confirmAction(message, onConfirm){
+    var slot = document.getElementById("confirmSlot");
+    slot.innerHTML = "";
+    var banner = document.createElement("div");
+    banner.className = "confirm-banner";
+    banner.innerHTML = '<span>'+escapeHtml(message)+'</span>';
+    var yes = document.createElement("button");
+    yes.className = "btn btn-primary btn-small"; yes.textContent = "Confirmar";
+    yes.onclick = function(){ slot.innerHTML=""; onConfirm(); };
+    var no = document.createElement("button");
+    no.className = "btn btn-ghost btn-small"; no.textContent = "Cancelar";
+    no.onclick = function(){ slot.innerHTML=""; };
+    banner.appendChild(yes); banner.appendChild(no);
+    slot.appendChild(banner);
+  }
+
+  // ---------- EVENTS ----------
+  document.getElementById("fBusiness").oninput = function(e){ state.meta.businessName = e.target.value; scheduleSave(); };
+  document.getElementById("fOwner").oninput = function(e){ state.meta.owner = e.target.value; scheduleSave(); };
+  document.getElementById("fCity").oninput = function(e){ state.meta.city = e.target.value; scheduleSave(); };
+
+  document.getElementById("btnPrint").onclick = function(){ window.print(); };
+  document.getElementById("btnRestore").onclick = function(){
+    confirmAction("Isso substitui todos os valores atuais pelos valores de referência originais. Deseja continuar?", function(){
+      var meta = state.meta;
+      state = defaultState();
+      state.meta = meta;
+      scheduleSave(); render();
+    });
+  };
+
+  render();
+})();
+</script>
+</body>
+</html>
